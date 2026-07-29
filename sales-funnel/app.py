@@ -22,6 +22,10 @@ import plotly.graph_objects as go
 import prince
 import streamlit as st
 
+# Make the data/ folder importable regardless of the working directory
+sys.path.insert(0, str(Path(__file__).parent / "data"))
+from generate_data import generate as generate_synthetic_data  # noqa: E402
+
 from modeling import run_all_models
 
 st.set_page_config(page_title="Sales Funnel Conversion Analytics", layout="wide")
@@ -31,11 +35,12 @@ DATA_DIR = Path(__file__).parent / "data"
 
 @st.cache_data
 def load_data():
-    if not (DATA_DIR / "prospects.csv").exists():
-        subprocess.run([sys.executable, str(DATA_DIR / "generate_data.py")], check=True)
-    prospects = pd.read_csv(DATA_DIR / "prospects.csv")
-    opportunities = pd.read_csv(DATA_DIR / "opportunities.csv")
-    return prospects, opportunities
+    prospects_path = DATA_DIR / "prospects.csv"
+    opportunities_path = DATA_DIR / "opportunities.csv"
+    if prospects_path.exists() and opportunities_path.exists():
+        return pd.read_csv(prospects_path), pd.read_csv(opportunities_path)
+    # Generate in-process (no subprocess) — more reliable on hosted environments
+    return generate_synthetic_data(output_dir=str(DATA_DIR))
 
 
 prospects, opportunities = load_data()
@@ -335,7 +340,3 @@ with tab_business:
         use_container_width=True, hide_index=True,
     )
     st.caption("Top 10 currently-open prospects ranked by predicted probability of converting.")
-
-
-
-
