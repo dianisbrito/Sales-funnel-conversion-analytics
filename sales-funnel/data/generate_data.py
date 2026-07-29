@@ -97,13 +97,20 @@ def simulate_opportunities(prospects: pd.DataFrame):
     return opp
 
 
-def main():
+def generate(output_dir="data"):
+    from pathlib import Path
     prospects = simulate_prospects()
     opportunities = simulate_opportunities(prospects)
 
-    prospects.to_csv("data/prospects.csv", index=False)
-    opportunities.to_csv("data/opportunities.csv", index=False)
+    out = Path(output_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    prospects.to_csv(out / "prospects.csv", index=False)
+    opportunities.to_csv(out / "opportunities.csv", index=False)
+    return prospects, opportunities
 
+
+def main():
+    prospects, opportunities = generate()
     print(f"prospects.csv: {len(prospects)} rows, conversion rate = {prospects['converted'].mean():.2%}")
     print(f"opportunities.csv: {len(opportunities)} rows, sale rate = {opportunities['sale'].mean():.2%}")
 
