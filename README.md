@@ -48,7 +48,3 @@ streamlit run app.py
 ## Tech stack
 
 `Python` · `scikit-learn` · `imbalanced-learn (SMOTE)` · `prince (MCA)` · `Streamlit` · `pandas` · `plotly`
-
-## About the author
-
-See full profile on [GitHub](https://github.com/dianisbrito/dianisbrito) 
